@@ -1,6 +1,8 @@
-# DHW2019
+# DisPay
 
-Discord Hack Week of 2019
+Discord Hack Week Submission of 2019
+
+Check out our [website](https://dispay.xyz)!
 
 ## Submission Category
 
