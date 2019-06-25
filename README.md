@@ -1,4 +1,7 @@
-# DisPay
+<img alt="Banner" src="assets/img/banner.png" style="border-radius:10px">
+
+<h1 align="center">DisPay</h1>
+<p align="center"><i>Made with :heart: by <a href="https://github.com/GreatGodApollo">@GreatGodApollo</a> and <a href="https://github.com/averen">@averen</a></i></p>
 
 Discord Hack Week Submission of 2019
 
