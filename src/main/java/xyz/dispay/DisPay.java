@@ -26,8 +26,9 @@ import org.slf4j.LoggerFactory;
 import xyz.dispay.api.DisPayAPI;
 import xyz.dispay.bot.CommandManager;
 import xyz.dispay.bot.Listener;
+import xyz.dispay.common.Constants;
+import xyz.dispay.common.RedisManager;
 
-import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -39,6 +40,7 @@ public class DisPay {
 	private static DisPay INSTANCE;
 
 	private CommandManager commandManager;
+	private RedisManager redisManager;
 	private DisPayAPI api;
 	private JDA jda;
 
@@ -54,16 +56,20 @@ public class DisPay {
 
 	/* Public Methods */
 
-	public CommandManager getCommandManager() {
-		return commandManager;
-	}
-
 	public DisPayAPI getAPI() {
 		return api;
 	}
 
+	public CommandManager getCommandManager() {
+		return commandManager;
+	}
+
 	public JDA getJDA() {
 		return jda;
+	}
+
+	public RedisManager getRedisManager() {
+		return redisManager;
 	}
 
 	/* Private Methods */
@@ -80,9 +86,35 @@ public class DisPay {
 			System.exit(1);
 			return null;
 		}
+		if (!config.has("token") || !(config.get("token") instanceof String)) {
+			LOG.error("The token field is not optional and must be a String");
+			System.exit(1);
+			return null;
+		}
+		String token = config.getString("token");
+		// Configure redis
+		int redisPort = Constants.REDIS_PORT, redisDatabase = Constants.REDIS_DATABASE;
+		String redisAddress = "localhost", redisPassword = null;
+		if (config.has("redis") && config.get("redis") instanceof JSONObject) {
+			JSONObject redis = config.getJSONObject("redis");
+			if (redis.has("host") && redis.get("host") instanceof String) {
+				redisAddress = redis.getString("host");
+			}
+			if (redis.has("port") && redis.get("port") instanceof Integer) {
+				redisPort = redis.getInt("port");
+			}
+			if (redis.has("password") && redis.get("password") instanceof String) {
+				redisPassword = redis.getString("password");
+			}
+			if (redis.has("database") && redis.get("database") instanceof Integer) {
+				redisDatabase = redis.getInt("database");
+			}
+		}
+		LOG.info("Connecting to redis at {}:{}/{} with password {}", redisAddress, redisPort, redisDatabase, redisPassword);
+		redisManager = new RedisManager(redisAddress, redisPort, redisPassword, redisDatabase);
 		try {
 			// Sign into discord
-			jda = new JDABuilder(config.getString("token"))
+			jda = new JDABuilder(token.equals("redis") ? redisManager.get("token") : token)
 					.addEventListeners(new Listener(this))
 					.build();
 		} catch (Exception e) {

@@ -21,9 +21,9 @@ package xyz.dispay.bot.commands;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import xyz.dispay.Constants;
 import xyz.dispay.DisPay;
 import xyz.dispay.bot.entities.Command;
+import xyz.dispay.common.Constants;
 
 import java.util.List;
 

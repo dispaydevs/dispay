@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
 import xyz.dispay.DisPay;
-import xyz.dispay.Constants;
+import xyz.dispay.common.Constants;
 
 import static spark.Spark.*;
 

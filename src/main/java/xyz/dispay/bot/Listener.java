@@ -27,9 +27,9 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import xyz.dispay.Constants;
 import xyz.dispay.DisPay;
 import xyz.dispay.bot.entities.Command;
+import xyz.dispay.common.Constants;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;

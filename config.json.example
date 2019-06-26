@@ -1,4 +1,8 @@
 {
     "token": "put your bot token here",
-    "port": 7777
+    "port": 7777,
+    "redis": {
+        "host": "localhost",
+        "database": 1
+    }
 }

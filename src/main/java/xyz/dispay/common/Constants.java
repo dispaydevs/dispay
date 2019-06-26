@@ -16,13 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xyz.dispay;
+package xyz.dispay.common;
 
 import java.awt.*;
 
 public class Constants {
 
 	public static final int DEFAULT_PORT = 7777;
+	public static final int REDIS_PORT = 6379;
+	public static final int REDIS_TIMEOUT = 5000;
+	public static final int REDIS_DATABASE = 0;
 	public static final Color BLURPLE = new Color(-9270822);
 	public static final String PREFIX = "$";
 
