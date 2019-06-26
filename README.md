@@ -15,12 +15,26 @@ Productivity
 
 - [JDA (Java Discord API)](https://github.com/DV8FromTheWorld/JDA)
 - [Spark Framework](https://github.com/perwendel/spark)
+- [Logback Classic](https://logback.qos.ch)
+- [JSON in Java](https://github.com/stleary/JSON-java)
+- [Reflections](https://github.com/ronmamo/reflections)
 
 ## Licensing
 
 This project is licensed under the [GNU General Public License v3.0](https://choosealicense.com/licenses/gpl-3.0/)
 
+## Configuration
+
+DisPay is configurable by using a `config.json` file. Example:
+```json
+{
+  "token": "your bot token",
+  "port": 7777
+}
+```
+The `port` field is optional.
+
 ## Team Members
 
 - apollo#9292
-- avery#7070
+- avery#1235
