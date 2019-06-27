@@ -18,6 +18,10 @@
 
 package xyz.dispay.api;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Encoders;
+import io.jsonwebtoken.security.Keys;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +30,10 @@ import spark.Response;
 import xyz.dispay.DisPay;
 import xyz.dispay.common.Constants;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
+
 import static spark.Spark.*;
 
 public class DisPayAPI {
@@ -33,12 +41,18 @@ public class DisPayAPI {
 	private static final Logger LOG = LoggerFactory.getLogger(DisPayAPI.class);
 
 	private final DisPay disPay;
+	private SecretKey signingKey;
 	private int port = Constants.DEFAULT_PORT;
-
-	/* Public Methods */
 
 	public DisPayAPI(DisPay disPay) {
 		this.disPay = disPay;
+	}
+
+	/* Public Methods */
+
+	public void generateSigningKey() {
+		this.signingKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+		disPay.getRedisManager().set("key", Encoders.BASE64.encode(signingKey.getEncoded()));
 	}
 
 	public void setPort(int port) {
@@ -46,6 +60,18 @@ public class DisPayAPI {
 	}
 
 	public void start() {
+
+		String key = disPay.getRedisManager().get("key");
+		if (key != null) {
+			try {
+				byte[] decodedKey = Base64.getDecoder().decode(key);
+				this.signingKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA512");
+			} catch (Exception e) {
+				LOG.warn("The signing key failed to load", e);
+			}
+		} else {
+			generateSigningKey();
+		}
 
 		port(port);
 
@@ -75,6 +101,28 @@ public class DisPayAPI {
 		halt(status, new JSONObject().put("message", message).toString());
 	}
 
+	private String checkAuthorization(String token) {
+		if (token == null || token.isEmpty()) {
+			unauthorized();
+		}
+		String id = "";
+		// Verify that the token is untouched
+		try {
+			id = Jwts.parser()
+					.setSigningKey(signingKey)
+					.parseClaimsJws(token)
+					.getBody()
+					.getId();
+		} catch (Exception e) {
+			unauthorized();
+		}
+		String verify = disPay.getRedisManager().get(id);
+		if (verify == null || !verify.equals(token)) {
+			unauthorized();
+		}
+		return id;
+	}
+
 	private void unauthorized() {
 		block(401, "Unauthorized");
 	}
@@ -87,8 +135,8 @@ public class DisPayAPI {
 	}
 
 	private Object purchase(Request request, Response response) {
-		return new JSONObject()
-				.put("message", "Not Implemented");
+		block(501, "Not Implemented");
+		return null;
 	}
 
 }
