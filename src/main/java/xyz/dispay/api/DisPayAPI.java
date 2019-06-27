@@ -60,6 +60,7 @@ public class DisPayAPI {
 
 		path("/api", () -> {
 			get("", this::landing);
+			get("/purchase", this::purchase);
 		});
 
 	}
@@ -83,6 +84,11 @@ public class DisPayAPI {
 	private Object landing(Request request, Response response) {
 		return new JSONObject()
 				.put("message", "Welcome to DisPay");
+	}
+
+	private Object purchase(Request request, Response response) {
+		return new JSONObject()
+				.put("message", "Not Implemented");
 	}
 
 }
