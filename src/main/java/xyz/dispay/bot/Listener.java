@@ -50,6 +50,7 @@ public class Listener implements EventListener {
 		if (event instanceof MessageReceivedEvent) {
 			// A message was received in a direct message or server
 			MessageReceivedEvent receivedEvent = (MessageReceivedEvent) event;
+			if (receivedEvent.getAuthor().isBot()) { return; }
 			String content = receivedEvent.getMessage().getContentRaw();
 			if (content.startsWith(Constants.PREFIX)) {
 				// Split the message up into command and arguments
