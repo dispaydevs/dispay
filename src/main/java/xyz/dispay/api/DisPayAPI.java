@@ -250,6 +250,10 @@ public class DisPayAPI {
 			block(400, "Exceeds balance");
 		}
 
+		if (amount < 0) {
+			block(400, "Amount can not be negative");
+		}
+
 		// Verify the description isn't empty
 		String description = body.getString("description");
 		if (description.isEmpty()) {

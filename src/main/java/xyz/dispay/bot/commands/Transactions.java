@@ -42,12 +42,12 @@ public class Transactions extends Command {
         Account account = DisPay.getInstance().getAccountManager().getAccount(user.getIdLong());
         StringBuilder description = new StringBuilder();
         List<Transaction> transactions = account.getTransactions();
-        // [TYPE] [Amount] [Timestamp] [Description]
+        // TYPE: AMT: TIME: DESC:
         if (!transactions.isEmpty()) {
             for (Transaction transaction : transactions) {
-                description.append("[").append(transaction.getType()).append("] [")
-                        .append(transaction.getAmount()).append("] [")
-                        .append(transaction.getTimestamp()).append("] ")
+                description.append("[").append(transaction.getType()).append("] $")
+                        .append(transaction.getAmount()).append(" @ ")
+                        .append(transaction.getTimestamp()).append(" for ")
                         .append(transaction.getDescription()).append("\n");
 
             }
