@@ -35,7 +35,7 @@ public class Account {
 
     public Account(long id, JSONObject data) {
         this.id = id;
-        this.balance = data.optLong("b", 250);
+        this.balance = data.optLong("b", DisPay.getInstance().getDefaultBalance());
         JSONArray t = data.optJSONArray("t");
         this.transactions = new ArrayList<>(t == null ? 10 : t.length());
         if (t != null) {

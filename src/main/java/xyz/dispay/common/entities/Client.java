@@ -53,8 +53,8 @@ public class Client {
 
     public JSONObject toJSONObject() {
         return new JSONObject()
-                .put("owner", owner)
-                .put("token", token);
+                .put("o", owner)
+                .put("t", token);
     }
 
     public void save() {

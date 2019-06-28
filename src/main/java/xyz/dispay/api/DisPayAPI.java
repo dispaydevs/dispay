@@ -33,7 +33,6 @@ import xyz.dispay.common.Constants;
 import xyz.dispay.common.Utils;
 import xyz.dispay.common.entities.Account;
 import xyz.dispay.common.entities.Client;
-import xyz.dispay.common.entities.Pool;
 import xyz.dispay.common.entities.Transaction;
 
 import javax.crypto.SecretKey;
@@ -239,7 +238,7 @@ public class DisPayAPI {
 		}
 
 		// Verify the account is an existing discord user
-		User user = Utils.getUserById(body.getString("account"));
+		User user = Utils.getUserById(body.getLong("account"));
 		if (user == null || user.isBot()) {
 			block(400, "Invalid account");
 		}
@@ -258,14 +257,13 @@ public class DisPayAPI {
 		}
 
 		// Process the transaction
+		LOG.info("Transaction ordered by {} from account {} for ${} with reason {}", id, user.getId(), amount, description);
 		account.getTransactions().add(new Transaction(user.getIdLong(), Long.parseUnsignedLong(id), amount, 0L,
 				OffsetDateTime.now().toEpochSecond(), description, Transaction.TransactionType.PURCHASE));
 		account.setBalance(account.getBalance() - amount).save();
-		long lottery = (long) (amount * Constants.LOTTERY);
-		Pool lotteryPool = disPay.getLotteryPool();
-		lotteryPool.setBalance(lotteryPool.getBalance() + lottery);
-		Pool globalPool = disPay.getGlobalPool();
-		globalPool.setBalance(globalPool.getBalance() + (amount - lottery));
+		long lottery = (long) (amount * disPay.getLotteryPercentage());
+		disPay.setLotteryBalance(disPay.getLotteryBalance() + lottery);
+		disPay.setGlobalBalance(disPay.getGlobalBalance() + (amount - lottery));
 		return new JSONObject()
 				.put("message", "Success")
 				.put("new_balance", account.getBalance());
