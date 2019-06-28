@@ -36,6 +36,12 @@ public class RedisManager {
 		}
 	}
 
+	public boolean exists(String key) {
+		try (Jedis jedis = getResource()) {
+			return jedis.exists(key);
+		}
+	}
+
 	public String get(String key) {
 		try (Jedis jedis = getResource()) {
 			return jedis.get(key);

@@ -46,6 +46,8 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.3")
     // https://github.com/perwendel/spark
     implementation("com.sparkjava:spark-core:2.9.1")
+    // https://github.com/google/guava
+    implementation("com.google.guava:guava:28.0-jre")
     // https://github.com/stleary/JSON-java
     implementation("org.json:json:20180813")
     // https://github.com/xetorthio/jedis

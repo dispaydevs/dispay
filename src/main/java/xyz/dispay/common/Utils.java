@@ -18,18 +18,23 @@
 
 package xyz.dispay.common;
 
-import java.awt.*;
-import java.time.ZoneOffset;
+import net.dv8tion.jda.api.entities.User;
+import xyz.dispay.DisPay;
 
-public class Constants {
+public class Utils {
 
-	public static final int DEFAULT_PORT = 7777;
-	public static final int REDIS_PORT = 6379;
-	public static final int REDIS_TIMEOUT = 5000;
-	public static final int REDIS_DATABASE = 0;
-	public static final float LOTTERY = 0.3f;
-	public static final Color BLURPLE = new Color(-9270822);
-	public static final String PREFIX = "$";
-	public static final ZoneOffset OFFSET = ZoneOffset.of("+00:00");
+	public static User getUserById(long id) {
+		try {
+			return DisPay.getInstance().getJDA().retrieveUserById(id).complete();
+		} catch (Exception ignored) {}
+		return null;
+	}
+
+	public static User getUserById(String id) {
+		try {
+			return getUserById(Long.parseUnsignedLong(id));
+		} catch (Exception ignored) {}
+		return null;
+	}
 
 }

@@ -18,6 +18,7 @@ Productivity
 - [Logback Classic](https://logback.qos.ch)
 - [JSON in Java](https://github.com/stleary/JSON-java)
 - [Reflections](https://github.com/ronmamo/reflections)
+- [Guava](https://github.com/google/guava)
 - [Jedis](https://github.com/xetorthio/jedis)
 
 ## Licensing

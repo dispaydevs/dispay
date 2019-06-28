@@ -27,8 +27,11 @@ import org.slf4j.LoggerFactory;
 import xyz.dispay.api.DisPayAPI;
 import xyz.dispay.bot.CommandManager;
 import xyz.dispay.bot.Listener;
+import xyz.dispay.common.AccountManager;
+import xyz.dispay.common.ClientManager;
 import xyz.dispay.common.Constants;
 import xyz.dispay.common.RedisManager;
+import xyz.dispay.common.entities.Pool;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,9 +43,13 @@ public class DisPay {
 
 	private static DisPay INSTANCE;
 
+	private AccountManager accountManager;
+	private ClientManager clientManager;
 	private CommandManager commandManager;
 	private RedisManager redisManager;
 	private DisPayAPI api;
+	private Pool global;
+	private Pool lottery;
 	private JDA jda;
 
 	/* Static Methods */
@@ -57,16 +64,32 @@ public class DisPay {
 
 	/* Public Methods */
 
+	public AccountManager getAccountManager() {
+		return accountManager;
+	}
+
 	public DisPayAPI getAPI() {
 		return api;
+	}
+
+	public ClientManager getClientManager() {
+		return clientManager;
 	}
 
 	public CommandManager getCommandManager() {
 		return commandManager;
 	}
 
+	public Pool getGlobalPool() {
+		return global;
+	}
+
 	public JDA getJDA() {
 		return jda;
+	}
+
+	public Pool getLotteryPool() {
+		return lottery;
 	}
 
 	public RedisManager getRedisManager() {
@@ -129,6 +152,8 @@ public class DisPay {
 		if (config.has("port") && config.get("port") instanceof Integer) {
 			api.setPort(config.getInt("port"));
 		}
+		accountManager = new AccountManager(this);
+		clientManager = new ClientManager(this);
 		// Load the commands
 		commandManager = new CommandManager();
 		return this;

@@ -22,6 +22,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
+import net.dv8tion.jda.api.entities.User;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,10 +30,18 @@ import spark.Request;
 import spark.Response;
 import xyz.dispay.DisPay;
 import xyz.dispay.common.Constants;
+import xyz.dispay.common.Utils;
+import xyz.dispay.common.entities.Account;
+import xyz.dispay.common.entities.Client;
+import xyz.dispay.common.entities.Pool;
+import xyz.dispay.common.entities.Transaction;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.Base64;
+import java.util.Date;
 
 import static spark.Spark.*;
 
@@ -55,6 +64,15 @@ public class DisPayAPI {
 		disPay.getRedisManager().set("key", Encoders.BASE64.encode(signingKey.getEncoded()));
 	}
 
+	public void generateSystemToken() {
+		String jwt = Jwts.builder()
+				.setIssuedAt(Date.from(Instant.now()))
+				.setId("system")
+				.signWith(signingKey)
+				.compact();
+		disPay.getRedisManager().set("system", jwt);
+	}
+
 	public void setPort(int port) {
 		this.port = port;
 	}
@@ -71,6 +89,7 @@ public class DisPayAPI {
 			}
 		} else {
 			generateSigningKey();
+			generateSystemToken();
 		}
 
 		port(port);
@@ -86,7 +105,11 @@ public class DisPayAPI {
 
 		path("/api", () -> {
 			get("", this::landing);
-			get("/purchase", this::purchase);
+			path("/clients", () -> {
+				post("", this::createClient);
+				get("/:id", this::getClient);
+			});
+			post("/purchase", this::purchase);
 		});
 
 	}
@@ -101,7 +124,8 @@ public class DisPayAPI {
 		halt(status, new JSONObject().put("message", message).toString());
 	}
 
-	private String checkAuthorization(String token) {
+	private String checkAuthorization(Request request) {
+		String token = request.headers("Authorization");
 		if (token == null || token.isEmpty()) {
 			unauthorized();
 		}
@@ -116,11 +140,43 @@ public class DisPayAPI {
 		} catch (Exception e) {
 			unauthorized();
 		}
-		String verify = disPay.getRedisManager().get(id);
-		if (verify == null || !verify.equals(token)) {
-			unauthorized();
+		if (id.equals("system")) {
+			String verify = disPay.getRedisManager().get(id);
+			if (verify == null || !verify.equals(token)) {
+				unauthorized();
+			}
+		} else {
+			Client client = disPay.getClientManager().getClient(id);
+			if (client == null || !token.equals(client.getToken())) {
+				unauthorized();
+			}
 		}
 		return id;
+	}
+
+	private JSONObject checkBody(Request request) {
+		// Verify the body isn't missing
+		String body = request.body();
+		if (body == null || body.isEmpty()) {
+			block(400, "Missing body");
+		}
+
+		// Verify the body is a valid JSON object
+		JSONObject data = new JSONObject();
+		try {
+			data = new JSONObject(body);
+		} catch (Exception e) {
+			block(400, "Invalid body");
+		}
+
+		return data;
+	}
+
+	private void checkSystem(Request request) {
+		String id = checkAuthorization(request);
+		if (!id.equals("system")) {
+			unauthorized();
+		}
 	}
 
 	private void unauthorized() {
@@ -134,9 +190,85 @@ public class DisPayAPI {
 				.put("message", "Welcome to DisPay");
 	}
 
-	private Object purchase(Request request, Response response) {
-		block(501, "Not Implemented");
+	private Object createClient(Request request, Response response) {
+		checkSystem(request);
+		JSONObject body = checkBody(request);
+		if (!body.has("id") && !(body.get("id") instanceof Long)) {
+			block(400, "Missing id");
+		}
+		if (!body.has("owner") && !(body.get("owner") instanceof Long)) {
+			block(400, "Missing owner");
+		}
+		// Generate a token for the client
+		String token = Jwts.builder()
+				.setIssuedAt(Date.from(Instant.now()))
+				.setId(String.valueOf(body.getLong("id")))
+				.signWith(signingKey)
+				.compact();
+		// Create the client
+		Client client = disPay.getClientManager()
+				.createClient(body.getLong("id"), body.getLong("owner"), token);
+		client.save();
+		return new JSONObject()
+				.put("token", client.getToken());
+	}
+
+	private Object getClient(Request request, Response response) {
+		block(501, "Not implemented");
 		return null;
+	}
+
+	private Object purchase(Request request, Response response) {
+		String id = checkAuthorization(request);
+		if (id.equals("system")) {
+			badRequest();
+		}
+
+		// Retrieve the body
+		JSONObject body = checkBody(request);
+
+		// Verify the request contains the required fields and they are the correct type
+		if (!body.has("account") || !(body.get("account") instanceof Long)) {
+			block(400, "Missing account");
+		}
+		if (!body.has("amount") || !(body.get("amount") instanceof Integer)) {
+			block(400, "Missing amount");
+		}
+		if (!body.has("description") || !(body.get("description") instanceof String)) {
+			block(400, "Missing description");
+		}
+
+		// Verify the account is an existing discord user
+		User user = Utils.getUserById(body.getString("account"));
+		if (user == null || user.isBot()) {
+			block(400, "Invalid account");
+		}
+		Account account = disPay.getAccountManager().getAccount(user.getIdLong());
+
+		// Verify the amount doesn't exceed the balance of the account
+		long amount = body.getLong("amount");
+		if (amount > account.getBalance()) {
+			block(400, "Exceeds balance");
+		}
+
+		// Verify the description isn't empty
+		String description = body.getString("description");
+		if (description.isEmpty()) {
+			block(400, "Empty description");
+		}
+
+		// Process the transaction
+		account.getTransactions().add(new Transaction(user.getIdLong(), Long.parseUnsignedLong(id), amount, 0L,
+				OffsetDateTime.now().toEpochSecond(), description, Transaction.TransactionType.PURCHASE));
+		account.setBalance(account.getBalance() - amount).save();
+		long lottery = (long) (amount * Constants.LOTTERY);
+		Pool lotteryPool = disPay.getLotteryPool();
+		lotteryPool.setBalance(lotteryPool.getBalance() + lottery);
+		Pool globalPool = disPay.getGlobalPool();
+		globalPool.setBalance(globalPool.getBalance() + (amount - lottery));
+		return new JSONObject()
+				.put("message", "Success")
+				.put("new_balance", account.getBalance());
 	}
 
 }

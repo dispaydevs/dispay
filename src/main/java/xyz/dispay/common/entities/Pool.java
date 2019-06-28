@@ -16,20 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xyz.dispay.common;
+package xyz.dispay.common.entities;
 
-import java.awt.*;
-import java.time.ZoneOffset;
+public class Pool {
 
-public class Constants {
+	private long balance;
 
-	public static final int DEFAULT_PORT = 7777;
-	public static final int REDIS_PORT = 6379;
-	public static final int REDIS_TIMEOUT = 5000;
-	public static final int REDIS_DATABASE = 0;
-	public static final float LOTTERY = 0.3f;
-	public static final Color BLURPLE = new Color(-9270822);
-	public static final String PREFIX = "$";
-	public static final ZoneOffset OFFSET = ZoneOffset.of("+00:00");
+	public long getBalance() {
+		return balance;
+	}
+
+	public void setBalance(long balance) {
+		this.balance = balance;
+	}
 
 }
