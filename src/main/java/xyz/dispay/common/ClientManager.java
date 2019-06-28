@@ -26,7 +26,6 @@ import xyz.dispay.DisPay;
 import xyz.dispay.common.entities.Client;
 
 import javax.annotation.Nonnull;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class ClientManager {
@@ -63,7 +62,9 @@ public class ClientManager {
 		if (disPay.getRedisManager().exists(String.valueOf(key))) {
 			try {
 				return cache.get(key);
-			} catch (ExecutionException ignored) {}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		return null;
 	}
@@ -71,7 +72,9 @@ public class ClientManager {
 	public Client getClient(String key) {
 		try {
 			return getClient(Long.parseUnsignedLong(key));
-		} catch (Exception ignored) {}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 

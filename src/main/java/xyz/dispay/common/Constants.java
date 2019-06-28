@@ -27,7 +27,8 @@ public class Constants {
 	public static final int REDIS_PORT = 6379;
 	public static final int REDIS_TIMEOUT = 5000;
 	public static final int REDIS_DATABASE = 0;
-	public static final float LOTTERY = 0.3f;
+	public static final long DEFAULT_BALANCE = 1000;
+	public static final float DEFAULT_LOTTERY = 0.3f;
 	public static final Color BLURPLE = new Color(-9270822);
 	public static final String PREFIX = "$";
 	public static final ZoneOffset OFFSET = ZoneOffset.of("+00:00");

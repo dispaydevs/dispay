@@ -35,7 +35,9 @@ DisPay is configurable by using a `config.json` file. Example:
     "redis": {
         "host": "localhost",
         "database": 1
-    }
+    },
+    "lottery_percentage": 0.3,
+    "starting_balance": 1000
 }
 ```
 All fields except `token` are optional. You may also specify "redis" as your token and DisPay will look for the token on your redis database under the key `token`.

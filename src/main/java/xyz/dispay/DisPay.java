@@ -31,7 +31,6 @@ import xyz.dispay.common.AccountManager;
 import xyz.dispay.common.ClientManager;
 import xyz.dispay.common.Constants;
 import xyz.dispay.common.RedisManager;
-import xyz.dispay.common.entities.Pool;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,9 +47,12 @@ public class DisPay {
 	private CommandManager commandManager;
 	private RedisManager redisManager;
 	private DisPayAPI api;
-	private Pool global;
-	private Pool lottery;
 	private JDA jda;
+
+	private long global;
+	private long lottery;
+	private long defaultBalance = Constants.DEFAULT_BALANCE;
+	private float lotteryPercentage = Constants.DEFAULT_LOTTERY;
 
 	/* Static Methods */
 
@@ -80,7 +82,11 @@ public class DisPay {
 		return commandManager;
 	}
 
-	public Pool getGlobalPool() {
+	public long getDefaultBalance() {
+		return defaultBalance;
+	}
+
+	public long getGlobalBalance() {
 		return global;
 	}
 
@@ -88,8 +94,12 @@ public class DisPay {
 		return jda;
 	}
 
-	public Pool getLotteryPool() {
+	public long getLotteryBalance() {
 		return lottery;
+	}
+
+	public float getLotteryPercentage() {
+		return lotteryPercentage;
 	}
 
 	public RedisManager getRedisManager() {
@@ -152,11 +162,50 @@ public class DisPay {
 		if (config.has("port") && config.get("port") instanceof Integer) {
 			api.setPort(config.getInt("port"));
 		}
+		// Configure economy settings
+		if (config.has("lottery_percentage") && config.get("lottery_percentage") instanceof Float) {
+			float percentage = config.getFloat("lottery_percentage");
+			if (percentage < 0 || percentage > 1) {
+				LOG.error("lottery_percentage must be between 0 and 1");
+			} else {
+				lotteryPercentage = percentage;
+			}
+		}
+		if (config.has("starting_balance") && config.get("starting_balance") instanceof Long) {
+			defaultBalance = config.getLong("starting_balance");
+		}
 		accountManager = new AccountManager(this);
 		clientManager = new ClientManager(this);
+		// Load the pool balances
+		String globalBalance = redisManager.get("global");
+		if (globalBalance != null) {
+			try {
+				global = Long.parseUnsignedLong(globalBalance);
+			} catch (Exception e) {
+				LOG.error("Failed to parse global balance", e);
+			}
+		}
+		String lotteryBalance = redisManager.get("lottery");
+		if (lotteryBalance != null) {
+			try {
+				lottery = Long.parseUnsignedLong(lotteryBalance);
+			} catch (Exception e) {
+				LOG.error("Failed to parse lottery balance", e);
+			}
+		}
 		// Load the commands
 		commandManager = new CommandManager();
 		return this;
+	}
+
+	public void setGlobalBalance(long balance) {
+		global = balance;
+		redisManager.set("global", String.valueOf(global));
+	}
+
+	public void setLotteryBalance(long balance) {
+		lottery = balance;
+		redisManager.set("lottery", String.valueOf(lottery));
 	}
 
 }

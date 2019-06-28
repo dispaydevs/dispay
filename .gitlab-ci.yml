@@ -1,0 +1,22 @@
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  script: gradle shadowJar
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - build/libs
+
+deploy:
+  stage: deploy
+  script:
+    - sudo service dispay stop
+    - cp build/libs/dispay-all.jar /home/dispay/DisPay.jar
+    - sudo service dispay start
+  environment:
+    name: production
+  only:
+    - master

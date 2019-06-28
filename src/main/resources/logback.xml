@@ -24,8 +24,20 @@
         </encoder>
     </appender>
 
+    <appender name="File" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/latest.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/%d{yyyy,aux}/%d{MM,aux}/%d{yyyyMMdd}.log.gz</fileNamePattern>
+        </rollingPolicy>
+        <immediateFlush>true</immediateFlush>
+        <encoder>
+            <pattern>[%d{MM.dd.yyyy HH:mm:ss.SSS}] %-5level [%thread] %logger{15} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <root level="INFO">
         <appender-ref ref="Console" />
+        <appender-ref ref="File" />
     </root>
 
 </configuration>

@@ -7,5 +7,6 @@
 # Ignore Gradle build output directory
 build
 
-# Don't accidentally commit your credentials
+# Don't accidentally commit your credentials or logs
 config.json
+logs
