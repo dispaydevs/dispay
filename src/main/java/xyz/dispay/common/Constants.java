@@ -19,6 +19,8 @@
 package xyz.dispay.common;
 
 import java.awt.*;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 
 public class Constants {
 
@@ -28,5 +30,5 @@ public class Constants {
 	public static final int REDIS_DATABASE = 0;
 	public static final Color BLURPLE = new Color(-9270822);
 	public static final String PREFIX = "$";
-
+	public static final ZoneOffset OFFSET = ZoneOffset.of("+00:00");
 }
