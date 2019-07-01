@@ -23,6 +23,7 @@ import xyz.dispay.common.Constants;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 public class Transaction {
 
@@ -33,6 +34,7 @@ public class Transaction {
     private final long timestamp;
     private final String description;
     private final TransactionType type;
+    private final UUID uniqueId;
 
 
     public Transaction(long id, JSONObject object) {
@@ -43,6 +45,7 @@ public class Transaction {
         this.from = object.optLong("f", 0);
         this.timestamp = object.getLong("t");
         this.type = TransactionType.fromId(object.getInt("i"));
+        this.uniqueId = UUID.fromString(object.getString("u"));
     }
 
     public Transaction(long id, long client, long amount, long from, long timestamp, String description,
@@ -54,6 +57,7 @@ public class Transaction {
         this.from = from;
         this.timestamp = timestamp;
         this.type = type;
+        this.uniqueId = UUID.randomUUID();
     }
 
     public long getAmount() {
@@ -76,6 +80,10 @@ public class Transaction {
         return id;
     }
 
+    public UUID getUniqueId() {
+        return uniqueId;
+    }
+
     public OffsetDateTime getTimestamp() {
         return OffsetDateTime.ofInstant(Instant.ofEpochSecond(timestamp), Constants.OFFSET);
     }
@@ -90,7 +98,8 @@ public class Transaction {
                 .put("c", client)
                 .put("d", description)
                 .put("t", timestamp)
-                .put("i", type.getId());
+                .put("i", type.getId())
+                .put("u", uniqueId);
         if (from != 0) {
             data.put("f", from);
         }

@@ -262,15 +262,17 @@ public class DisPayAPI {
 
 		// Process the transaction
 		LOG.info("Transaction ordered by {} from account {} for ${} with reason {}", id, user.getId(), amount, description);
-		account.getTransactions().add(new Transaction(user.getIdLong(), Long.parseUnsignedLong(id), amount, 0L,
-				OffsetDateTime.now().toEpochSecond(), description, Transaction.TransactionType.PURCHASE));
+		Transaction transaction = new Transaction(user.getIdLong(), Long.parseUnsignedLong(id), amount, 0L,
+				OffsetDateTime.now().toEpochSecond(), description, Transaction.TransactionType.PURCHASE);
+		account.getTransactions().add(transaction);
 		account.setBalance(account.getBalance() - amount).save();
 		long lottery = (long) (amount * disPay.getLotteryPercentage());
 		disPay.setLotteryBalance(disPay.getLotteryBalance() + lottery);
 		disPay.setGlobalBalance(disPay.getGlobalBalance() + (amount - lottery));
 		return new JSONObject()
 				.put("message", "Success")
-				.put("new_balance", account.getBalance());
+				.put("new_balance", account.getBalance())
+				.put("unique", transaction.getUniqueId());
 	}
 
 }
