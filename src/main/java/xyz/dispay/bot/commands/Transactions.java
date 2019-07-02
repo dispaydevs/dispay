@@ -37,7 +37,7 @@ public class Transactions extends Command {
     }
 
     @Override
-    public void execute(MessageReceivedEvent event) {
+    public void execute(MessageReceivedEvent event, String[] args) {
         User user = event.getAuthor();
         Account account = DisPay.getInstance().getAccountManager().getAccount(user.getIdLong());
         StringBuilder description = new StringBuilder();

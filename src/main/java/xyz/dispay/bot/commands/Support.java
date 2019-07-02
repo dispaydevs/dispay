@@ -32,7 +32,7 @@ public class Support extends Command {
     }
 
     @Override
-    public void execute(MessageReceivedEvent event) {
+    public void execute(MessageReceivedEvent event, String[] args) {
         User author = event.getAuthor();
         event.getChannel().sendMessage(new EmbedBuilder()
                 .setAuthor(author.getAsTag(), null, author.getEffectiveAvatarUrl())

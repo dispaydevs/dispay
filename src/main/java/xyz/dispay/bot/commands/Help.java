@@ -35,7 +35,7 @@ public class Help extends Command {
 	}
 
 	@Override
-	public void execute(MessageReceivedEvent event) {
+	public void execute(MessageReceivedEvent event, String[] args) {
 		StringBuilder description = new StringBuilder();
 		List<Command> commands = DisPay.getInstance().getCommandManager().getCommands();
 		for (Command command : commands) {

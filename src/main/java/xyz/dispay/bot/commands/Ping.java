@@ -29,7 +29,7 @@ public class Ping extends Command {
 	}
 
 	@Override
-	public void execute(MessageReceivedEvent event) {
+	public void execute(MessageReceivedEvent event, String[] args) {
 		event.getJDA().getRestPing().queue(ping -> {
 			event.getChannel().sendMessage("Pong! **" + ping + "**ms").queue();
 		});

@@ -56,6 +56,12 @@ public class Listener implements EventListener {
 				// Split the message up into command and arguments
 				String[] parts = Arrays.copyOf(content.substring(Constants.PREFIX.length()).trim().split("\\s+", 2), 2);
 				String name = parts[0].toLowerCase();
+				String[] args;
+				if (parts[1] != null) {
+					args = parts[1].split(" ");
+				} else {
+					args = null;
+				}
 				// Check if a command exists with that name or alias
 				Command command = disPay.getCommandManager().getCommand(name);
 				if (command == null) return;
@@ -65,7 +71,7 @@ public class Listener implements EventListener {
 				Member self = receivedEvent.isFromGuild() ? receivedEvent.getGuild().getSelfMember() : null;
 				if (self != null &&  !self.hasPermission(receivedEvent.getTextChannel(), Permission.MESSAGE_WRITE)) return;
 				try {
-					command.execute(receivedEvent);
+					command.execute(receivedEvent, args);
 				} catch (Exception e) {
 					LOG.error("Error while processing a command", e);
 				}

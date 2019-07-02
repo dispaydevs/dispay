@@ -25,7 +25,7 @@ public abstract class Command {
 	protected String name = "null";
 	protected String description = "No description available";
 
-	public abstract void execute(MessageReceivedEvent event);
+	public abstract void execute(MessageReceivedEvent event, String[] args);
 
 	public String getDescription() {
 		return description;
