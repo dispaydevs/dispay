@@ -27,6 +27,7 @@ import xyz.dispay.common.Constants;
 import xyz.dispay.common.entities.Account;
 import xyz.dispay.common.entities.Transaction;
 
+import java.util.Comparator;
 import java.util.List;
 
 public class Transactions extends Command {
@@ -42,15 +43,22 @@ public class Transactions extends Command {
         Account account = DisPay.getInstance().getAccountManager().getAccount(user.getIdLong());
         StringBuilder description = new StringBuilder();
         List<Transaction> transactions = account.getTransactions();
+        transactions.sort(Comparator.comparing(Transaction::getTimestamp).reversed());
         //  ID
         //  [TYPE] $AMT @ TIME for DESC
+        int count = 0;
         if (!transactions.isEmpty()) {
             for (Transaction transaction : transactions) {
-                description.append("`").append(transaction.getUniqueId()).append("`\n")
-                        .append("[").append(transaction.getType()).append("] $")
-                        .append(transaction.getAmount()).append(" @ ")
-                        .append(transaction.getTimestamp()).append(" for ")
-                        .append(transaction.getDescription()).append("\n");
+                if (count < 10) {
+                    description.append("`").append(transaction.getUniqueId()).append("`\n")
+                            .append("[").append(transaction.getType()).append("] $")
+                            .append(transaction.getAmount()).append(" @ ")
+                            .append(transaction.getTimestamp()).append(" for ")
+                            .append(transaction.getDescription()).append("\n");
+                    count ++;
+                } else {
+                    break;
+                }
 
             }
             user.openPrivateChannel().queue((channel) -> {
