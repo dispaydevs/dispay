@@ -20,6 +20,7 @@ package xyz.dispay;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -151,6 +152,7 @@ public class DisPay {
 			jda = new JDABuilder(token.equals("redis") ? redisManager.get("token") : token)
 					.addEventListeners(new Listener(this))
 					.setActivity(Activity.watching("for transactions | dispay.xyz"))
+					.setStatus(OnlineStatus.DO_NOT_DISTURB)
 					.build();
 		} catch (Exception e) {
 			LOG.error("Failed to login to discord", e);

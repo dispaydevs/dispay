@@ -38,11 +38,11 @@ public class About extends Command {
                 .setAuthor(user.getAsTag(), null, user.getEffectiveAvatarUrl())
                 .setColor(Constants.BLURPLE)
                 .setTitle("What is DisPay?")
-                .setDescription("**DisPay** is a simple project originally made for" +
+                .setDescription("**DisPay** is a simple project originally made for " +
                         "Discord Hack Week 2019 that implements a **currency API** " +
                         "for others to use.\n\n" +
                         "A simple and easy to use **JSON Web API** provides a way for" +
-                        "many bots to share a currency to save users from having" +
+                        "many bots to share a currency to save users from having " +
                         "to worry about what bot they're earning on.\n\n" +
                         "<:dispay:596155383806951427> Click [here](https://dispay.xyz) to visit our website!\n" +
                         "<:github:596150583623417856> Click [here](https://github.com/dispaydevs/dispay) to view the source!")
