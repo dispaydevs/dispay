@@ -44,9 +44,9 @@ public class About extends Command {
                         "A simple and easy to use **JSON Web API** provides a way for" +
                         "many bots to share a currency to save users from having " +
                         "to worry about what bot they're earning on.\n\n" +
-                        "<:dispay:596155383806951427> Click [here](https://dispay.xyz) to visit our website!\n" +
-                        "<:github:596150583623417856> Click [here](https://github.com/dispaydevs/dispay) to view the source!")
-                .setImage("https://github.com/dispaydevs/dispay/raw/master/assets/img/banner.png")
+                        "<:dispay:596484956356870174> Click [**here**](https://dispay.xyz) to visit our website!\n" +
+                        "<:github:596150583623417856> Click [**here**](https://github.com/dispaydevs/dispay) to view the source!")
+                .setThumbnail("https://github.com/dispaydevs/dispay/raw/master/assets/img/logo.png")
                 .setFooter("Created by apollo#9292 and avery#1235")
                 .build()
         ).queue();
