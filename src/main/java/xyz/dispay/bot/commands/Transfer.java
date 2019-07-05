@@ -27,6 +27,7 @@ import xyz.dispay.common.Constants;
 import xyz.dispay.common.entities.Account;
 import xyz.dispay.common.entities.Transaction;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -70,6 +71,30 @@ public class Transfer extends Command {
                     ).queue();
                     return;
                 }
+
+                Long udays = Duration.between(user.getTimeCreated(), OffsetDateTime.now()).toDays();
+                Long adays = Duration.between(user.getTimeCreated(), OffsetDateTime.now()).toDays();
+
+                if (udays < 14) {
+                    event.getChannel().sendMessage(new EmbedBuilder()
+                            .setAuthor(author.getAsTag(), null, author.getEffectiveAvatarUrl())
+                            .setColor(Constants.BLURPLE)
+                            .setDescription("Your account is less than 2 weeks old!")
+                            .build()
+                    ).queue();
+                    return;
+                }
+
+                if (adays < 14) {
+                    event.getChannel().sendMessage(new EmbedBuilder()
+                            .setAuthor(author.getAsTag(), null, author.getEffectiveAvatarUrl())
+                            .setColor(Constants.BLURPLE)
+                            .setDescription("That person's account is less than 2 weeks old!")
+                            .build()
+                    ).queue();
+                    return;
+                }
+
                 Account transferAccount = DisPay.getInstance().getAccountManager().getAccount(user.getIdLong());
                 Account authorAccount = DisPay.getInstance().getAccountManager().getAccount(author.getIdLong());
 

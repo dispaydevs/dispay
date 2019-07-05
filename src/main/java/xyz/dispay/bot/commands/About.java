@@ -41,7 +41,7 @@ public class About extends Command {
                 .setDescription("**DisPay** is a simple project originally made for " +
                         "Discord Hack Week 2019 that implements a **currency API** " +
                         "for others to use.\n\n" +
-                        "A simple and easy to use **JSON Web API** provides a way for" +
+                        "A simple and easy to use **JSON Web API** provides a way for"  +
                         "many bots to share a currency to save users from having " +
                         "to worry about what bot they're earning on.\n\n" +
                         "<:dispay:596484956356870174> Click [**here**](https://dispay.xyz) to visit our website!\n" +
