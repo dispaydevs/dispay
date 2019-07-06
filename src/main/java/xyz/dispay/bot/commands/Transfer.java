@@ -72,10 +72,10 @@ public class Transfer extends Command {
                     return;
                 }
 
-                Long udays = Duration.between(user.getTimeCreated(), OffsetDateTime.now()).toDays();
-                Long adays = Duration.between(user.getTimeCreated(), OffsetDateTime.now()).toDays();
+                long udays = Duration.between(user.getTimeCreated(), OffsetDateTime.now()).toDays();
+                long adays = Duration.between(author.getTimeCreated(), OffsetDateTime.now()).toDays();
 
-                if (udays < 14) {
+                if (adays < 14) {
                     event.getChannel().sendMessage(new EmbedBuilder()
                             .setAuthor(author.getAsTag(), null, author.getEffectiveAvatarUrl())
                             .setColor(Constants.BLURPLE)
@@ -85,7 +85,7 @@ public class Transfer extends Command {
                     return;
                 }
 
-                if (adays < 14) {
+                if (udays < 14) {
                     event.getChannel().sendMessage(new EmbedBuilder()
                             .setAuthor(author.getAsTag(), null, author.getEffectiveAvatarUrl())
                             .setColor(Constants.BLURPLE)

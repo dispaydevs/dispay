@@ -21,6 +21,7 @@ package xyz.dispay;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Activity;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -159,6 +160,9 @@ public class DisPay {
 			System.exit(1);
 			return null;
 		}
+		LOG.info(jda.getInviteUrl(
+				Permission.ADMINISTRATOR
+		));
 		// Configure the api
 		api = new DisPayAPI(this);
 		if (config.has("port") && config.get("port") instanceof Integer) {
